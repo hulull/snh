@@ -40,7 +40,7 @@ public class ModianTask implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ModianTask.class);
 
-    private static Long newestClockIn = -1L;
+    private static Long newestClockIn = System.currentTimeMillis();
     private static final long TIME_INTERVAL = 5*1000;
     private static final double CONSTANT = 9.16;
 
