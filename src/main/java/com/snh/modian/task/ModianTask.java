@@ -40,7 +40,7 @@ public class ModianTask implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ModianTask.class);
 
-    private static Long newestClockIn = -1L;
+    private static Long newestClockIn = System.currentTimeMillis();
     private static final long TIME_INTERVAL = 5*1000;
     private static final double CONSTANT = 9.16;
 
@@ -63,7 +63,7 @@ public class ModianTask implements Runnable {
             if (TimeUtils.StringToLong(order.getPay_time()) > newestClockIn) {
                 resultList.add(order);
             }
-            maxPayTime = Math.max(TimeUtils.StringToLong(order.getPay_time()), newestClockIn);
+            maxPayTime = Math.max(TimeUtils.StringToLong(order.getPay_time()), maxPayTime);
         }
         newestClockIn = maxPayTime;
         rollCard(resultList);
@@ -217,8 +217,8 @@ public class ModianTask implements Runnable {
             double gap = Double.valueOf(detail.getGoal()) - detail.getAlready_raised();
             info += "====================\n已筹" + detail.getAlready_raised() + "元，距离目标还差" + gap + "元。\n====================\n"
                     + detail.getPro_name() + " 链接" + "https://zhongchou.modian.com/item/" + detail.getPro_id() + ".html";
-            System.out.println(info);
-//            CqpHttpApi.getInstance().sendGroupMsg(GROUPID, info);
+//            System.out.println(info);
+            CqpHttpApi.getInstance().sendGroupMsg(GROUPID, info);
         }
     }
 
@@ -233,7 +233,7 @@ public class ModianTask implements Runnable {
             }
             if (!result) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
