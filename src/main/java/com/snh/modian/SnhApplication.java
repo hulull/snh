@@ -17,6 +17,8 @@ public class SnhApplication {
 	public static void main(String[] args) {
 		ApplicationContext context = SpringApplication.run(SnhApplication.class, args);
 		ModianTask modianTask = context.getBean(ModianTask.class);
-		new Thread(modianTask).start();
+		Thread thread = new Thread(modianTask);
+		thread.setName("ModianTask");
+		thread.start();
 	}
 }
