@@ -19,7 +19,8 @@ public class ModianTaskTest {
     public void test() {
 //
 //        modianTask.rollCardByRank(3, "test");
-        System.out.println(new Date(1525792738000L));
+//        System.out.println(new Date(1525792738000L));
 //        System.out.println(Math.random());
+        modianTask.getUserRankDetail("喵星人");
     }
 }

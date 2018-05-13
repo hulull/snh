@@ -43,6 +43,7 @@ public class ModianTask implements Runnable {
     private static Long newestClockIn = System.currentTimeMillis();
     private static final long TIME_INTERVAL = 5*1000;
     private static final double CONSTANT = 9.16;
+    DecimalFormat df = new DecimalFormat("0.00");
 
     List<String> pCard = Arrays.asList("包 is watching you-1星", "恶犬-1星", "神秘冰淇淋-1星", "先睡一步-1星", "桌布-1星");
     List<String> nCard = Arrays.asList("暗中观察-2星", "嘟嘴思考-2星", "聆听-2星", "毛巾广告-2星", "歪头杀-2星", "稀有发型-2星");
@@ -125,7 +126,7 @@ public class ModianTask implements Runnable {
         }
     }
 
-    private Map<String, String> getUserRankDetail(String username) {
+    public Map<String, String> getUserRankDetail(String username) {
         Map<String, String> rankDetail = new HashMap<>();
         List<RankMoney> rankMoneyList = new ArrayList<>();
         int page = 1;
@@ -153,7 +154,6 @@ public class ModianTask implements Runnable {
                 }
             }
             double gap = Double.valueOf(formerUserRankMoney.getBacker_money()) - Double.valueOf(userRankMoney.getBacker_money());
-            DecimalFormat df = new DecimalFormat("0.00");
             rankDetail.put(ModianConstant.GAP, df.format(gap));
         }
         return rankDetail;
@@ -215,9 +215,9 @@ public class ModianTask implements Runnable {
             Detail detail = ModianApi.queryDetail(MODIANID);
 //            System.out.println(detail.toString());
             double gap = Double.valueOf(detail.getGoal()) - detail.getAlready_raised();
-            info += "====================\n已筹" + detail.getAlready_raised() + "元，距离目标还差" + gap + "元。\n====================\n"
+            info += "====================\n已筹" + detail.getAlready_raised() + "元，距离目标还差" + df.format(gap) + "元。\n====================\n"
                     + detail.getPro_name() + " 链接" + "https://zhongchou.modian.com/item/" + detail.getPro_id() + ".html";
-//            System.out.println(info);
+            LOGGER.info(info);
             CqpHttpApi.getInstance().sendGroupMsg(GROUPID, info);
         }
     }
