@@ -68,6 +68,9 @@ public class ModianTask implements Runnable {
             maxPayTime = Math.max(TimeUtils.StringToLong(order.getPay_time()), maxPayTime);
         }
         newestClockIn = maxPayTime;
+        if (CollectionUtils.isEmpty(resultList)) {
+            return false;
+        }
         rollCard(resultList);
         return true;
     }
