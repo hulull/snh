@@ -13,17 +13,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class CqpApiTest {
     @Test
     public void test() {
-//        CqpHttpApiResp xx = CqpHttpApi.getInstance().sendGroupMsg(767485026, "[CQ:image,file=level5/测量-5星.png]");
+        for (int i = 0; i <= 2; i++) {
+            CqpHttpApiResp xx = CqpHttpApi.getInstance().sendGroupMsg(565690548, "[CQ:image,file=l5/吾辈是猫-5星.jpg]");
+            if (xx.getRetcode() == 0) {
+                break;
+            }
+        }
         //CqpHttpApiResp xx = CqpHttpApi.sendPrivateMsg(1846253361, "[CQ:shake]");
-//        System.out.println(xx.getRetcode());
-//        System.out.println(xx.getStatus());
-//        for (int i = 0; i < 100; i++) {
-//            double d = Math.random();
-//            if (d >= 0.99) {
-//                System.out.println(d);
-//            }
-//        }
-//        System.out.println("========");
-
     }
 }
