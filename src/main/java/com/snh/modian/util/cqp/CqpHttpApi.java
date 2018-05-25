@@ -255,4 +255,10 @@ public class CqpHttpApi implements CqpApi {
         String resp = HttpUtil.get(HTTP_SERVER_HOST + SET_RESTART_PLUGIN);
         return JsonUtils.toObject(resp, CqpHttpApiResp.class);
     }
+
+    @Override
+    public String getMsg() {
+        String msg = HttpUtil.post(HTTP_POST_URL, null);
+        return msg;
+    }
 }

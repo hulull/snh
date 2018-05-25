@@ -11,6 +11,7 @@ import com.snh.modian.domain.cqp.CqpHttpApiResp;
  */
 interface CqpApi {
 
+    String HTTP_POST_URL = "http://217.0.0.1:5701/";
     String HTTP_SERVER_HOST = "http://127.0.0.1:5700/";
     String SEND_PRIVATE_MSG = "send_private_msg";
     String SEND_GROUP_MSG = "send_group_msg";
@@ -177,4 +178,6 @@ interface CqpApi {
      * @return
      */
     CqpHttpApiResp setRestartPlugin();
+
+    String getMsg();
 }

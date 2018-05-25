@@ -1,11 +1,12 @@
 package com.snh.modian.domain.modian;
 
+import java.util.Comparator;
 import java.util.Date;
 
 /**
  * 项目详情类
  */
-public class Detail {
+public class Detail implements Comparable<Detail> {
     private String pro_id;
     private String pro_name;
     private String goal;
@@ -84,5 +85,10 @@ public class Detail {
                 ", pc_cover='" + pc_cover + '\'' +
                 ", mobile_cover='" + mobile_cover + '\'' +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Detail o) {
+        return (int) Math.floor(o.getAlready_raised() - this.getAlready_raised());
     }
 }

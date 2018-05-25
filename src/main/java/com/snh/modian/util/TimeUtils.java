@@ -2,6 +2,7 @@ package com.snh.modian.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class TimeUtils {
@@ -14,5 +15,23 @@ public class TimeUtils {
             e.printStackTrace();
         }
         return -1;
+    }
+
+    public static long getZeroClock() {
+        return getHourClock(0);
+    }
+
+    public static long getSevenClock() {
+        return getHourClock(7);
+    }
+
+    public static long getHourClock(int n) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, n);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+//        System.out.println(calendar.getTime());
+        return calendar.getTimeInMillis();
     }
 }

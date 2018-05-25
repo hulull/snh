@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,10 +35,18 @@ public class HttpUtil {
             .setSocketTimeout(3000)
             .build();
 
+    public static final Map<String, String> header = new HashMap<>();
+
     static {
         clientConnectionManager = new PoolingHttpClientConnectionManager();
         clientConnectionManager.setMaxTotal(100);
         clientConnectionManager.setDefaultMaxPerRoute(clientConnectionManager.getMaxTotal());
+
+        //设置请求头
+        header.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
+        header.put("Accept-Encoding", "gzip, deflate");
+        header.put("Accept-Language", "zh-CN,zh;q=0.8");
+        header.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.91 Safari/537.36");
     }
 
     private static CloseableHttpClient getHttpClient() {
@@ -51,32 +60,10 @@ public class HttpUtil {
         return httpClient;
     }
 
-    public static String modianPost(String url, Map<String, String> params) {
-        String sign = SignDemo.getSign(url, params);
-        params.put("sign", sign);
-        HttpPost httPost = new HttpPost(url);
-        httPost.setConfig(config);
-        httPost.setHeader("User-Agent", "Modian");
-        List<NameValuePair> formatParams = new ArrayList<NameValuePair>();
-        if (!CollectionUtils.isEmpty(params)) {
-            params.forEach((key, value)->{
-                formatParams.add(new BasicNameValuePair(key, value));
-            });
-        }
-        httPost.setEntity(new UrlEncodedFormEntity(formatParams, StandardCharsets.UTF_8));
-        try {
-            HttpResponse response = getHttpClient().execute(httPost);
-            HttpEntity entity = response.getEntity();
-            return EntityUtils.toString(entity); // 这里返回的是Unicode编码
-        } catch (Exception e) {
-            LOGGER.error(String.format("post(%s, %s) failed!", url, params.toString()), e);
-            return null;
-        }
-    }
-
     public static String post(String url, Map<String, String> params){
         HttpPost httPost = new HttpPost(url);
         httPost.setConfig(config);
+        header.forEach((k, v) -> {httPost.addHeader(k, v);});
         List<NameValuePair> formatParams = new ArrayList<NameValuePair>();
         if (!CollectionUtils.isEmpty(params)) {
             params.forEach((key, value)->{

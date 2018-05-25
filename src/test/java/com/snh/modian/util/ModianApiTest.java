@@ -30,20 +30,9 @@ public class ModianApiTest {
 
     @Test
     public void test() {
-//        Detail detail = ModianApi.queryDetail(MODIANID);
-////        List<Order> orders = ModianApi.queryOrders(ModianConstant.ITEM_ID, 1);
-//        List<RankMoney> rankMoneyList = new ArrayList<>();
-//        int page = 1;
-//        List<RankMoney> pageRankMoneyList = null;
-//        do {
-//            pageRankMoneyList = ModianApi.queryRankMoneys(MODIANID, page);
-//            rankMoneyList.addAll(pageRankMoneyList);
-//            page++;
-//        } while (!CollectionUtils.isEmpty(pageRankMoneyList));
-        Map<String, String> map = new HashMap<>();
-        map.put("test1", "11");
-        map.put("test2", "22");
-        System.out.println(map.toString());
+//        ModianApi.queryDetails(String.valueOf(MODIANID + "," + "17871"));
+        List<Order> orders = ModianApi.queryOrders(17871, 1);
+        System.out.println(1);
 //        System.out.println(detail.toString());
 //        CqpHttpApi.getInstance().sendGroupMsg(767485026, detail.toString());
     }

@@ -1,14 +1,11 @@
 package com.snh.modian;
 
-import com.snh.modian.domain.modian.Order;
+import com.snh.modian.task.ModianPkTask;
 import com.snh.modian.task.ModianTask;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.util.CollectionUtils;
-
-import java.util.List;
 
 @SpringBootApplication
 @EnableScheduling
@@ -20,5 +17,9 @@ public class SnhApplication {
 		Thread thread = new Thread(modianTask);
 		thread.setName("ModianTask");
 		thread.start();
+		ModianPkTask modianPkTask = context.getBean(ModianPkTask.class);
+		Thread pkThread = new Thread(modianPkTask);
+		pkThread.setName("ModianPkTask");
+		pkThread.start();
 	}
 }

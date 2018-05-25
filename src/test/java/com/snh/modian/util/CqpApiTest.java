@@ -21,4 +21,10 @@ public class CqpApiTest {
         }
         //CqpHttpApiResp xx = CqpHttpApi.sendPrivateMsg(1846253361, "[CQ:shake]");
     }
+
+    @Test
+    public void testGetMsg() {
+        String ret = CqpHttpApi.getInstance().getMsg();
+        System.out.println(ret);
+    }
 }
