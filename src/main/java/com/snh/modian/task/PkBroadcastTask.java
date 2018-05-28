@@ -25,7 +25,7 @@ public class PkBroadcastTask {
     @Value("${GROUPID}")
     private int GROUPID;
 
-    @Scheduled(cron = "0 0 * * * ?")
+//    @Scheduled(cron = "0 0 * * * ?")
     public void pkBroadcast() {
         long time = System.currentTimeMillis();
         if (time > TimeUtils.getZeroClock() && time < TimeUtils.getSevenClock()) {
