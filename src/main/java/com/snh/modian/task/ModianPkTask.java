@@ -48,7 +48,7 @@ public class ModianPkTask implements Runnable {
             }
             if (!CollectionUtils.isEmpty(resultList)) {
                 flag = true;
-                rollCardService.rollCardV2(id, resultList);
+                rollCardService.rollCard(id, resultList);
             }
         }
         if (maxPayTime > newestClockIn) {
