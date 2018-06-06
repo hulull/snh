@@ -76,7 +76,7 @@ public class ModianPkTask implements Runnable {
                     modianIdList.add(Integer.valueOf(ids[i]));
                 }
             } catch (NumberFormatException e) {
-                LOGGER.error("pk settings error! {}", ids);
+                LOGGER.error("pk settings error! {}", ids[i]);
                 return;
             }
         }
