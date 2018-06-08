@@ -30,6 +30,7 @@ public class PkBroadcastTask {
     @Value("${GROUP2}")
     private String GROUP2;
     DecimalFormat df = new DecimalFormat("0.00");
+    private static final long TIME = 1000 * 60 * 10;
 
     @Scheduled(cron = "0 0 * * * ?")
     public void pkBroadcast() {
@@ -37,51 +38,56 @@ public class PkBroadcastTask {
         if (time > TimeUtils.getZeroClock() && time < TimeUtils.getSevenClock()) {
             return;
         }
-        List<Detail> detailList = ModianApi.queryDetails(UNIT_MODIANIDS);
-        if (CollectionUtils.isEmpty(detailList)) {
-            LOGGER.error("ModianApi.queryDetails({}) failed!", UNIT_MODIANIDS);
-            return;
-        }
-        Collections.sort(detailList);
-        StringBuilder info = new StringBuilder("当前排名如下:\n====================\n");
-        for (int i = 0; i < detailList.size(); i++) {
-            Detail detail = detailList.get(i);
-            if (TimeUtils.StringToLong(detail.getEnd_time()) < System.currentTimeMillis()) {
-                return;
-            }
-            int ranking = i + 1;
-            info.append("【").append(ranking).append("】");
-            info.append(detail.getPro_name()).append("\n");
-            info.append("￥").append(detail.getAlready_raised()).append("/").append("￥").append(detail.getGoal()).append("\n");
-//            info.append("https://zhongchou.modian.com/item/").append(detail.getPro_id()).append(".html\n");
-            info.append("====================\n");
-        }
+//        List<Detail> detailList = ModianApi.queryDetails(UNIT_MODIANIDS);
+//        if (CollectionUtils.isEmpty(detailList)) {
+//            LOGGER.error("ModianApi.queryDetails({}) failed!", UNIT_MODIANIDS);
+//            return;
+//        }
+//        Collections.sort(detailList);
+//        StringBuilder info = new StringBuilder("当前排名如下:\n====================\n");
+//        for (int i = 0; i < detailList.size(); i++) {
+//            Detail detail = detailList.get(i);
+//            if (TimeUtils.StringToLong(detail.getEnd_time()) < System.currentTimeMillis() + TIME) {
+//                return;
+//            }
+//            int ranking = i + 1;
+//            info.append("【").append(ranking).append("】");
+//            info.append(detail.getPro_name()).append("\n");
+//            info.append("￥").append(detail.getAlready_raised()).append("/").append("￥").append(detail.getGoal()).append("\n");
+////            info.append("https://zhongchou.modian.com/item/").append(detail.getPro_id()).append(".html\n");
+//            info.append("====================\n");
+//        }
+        // PK
+        List<Detail> detailListB = ModianApi.queryDetails(GROUP1);
+        List<Detail> detailListG = ModianApi.queryDetails(GROUP2);
+        StringBuilder info = new StringBuilder("当前PK情况如下:\n====================\n");
         // 分组处理
-        String[] group1 = GROUP1.split(",");
-        String[] group2 = GROUP2.split(",");
         double total1 = 0.0;
         double total2 = 0.0;
-        String name1 = "栗包组合";
-        String name2 = "天王组合";
-        for (Detail d : detailList) {
-            for (String id : group1) {
-                if (d.getPro_id().equalsIgnoreCase(id)) {
-                    total1 += d.getAlready_raised();
-                }
+        String name1 = "B城";
+        String name2 = "G港";
+        info.append("B城:\n");
+        for (Detail d : detailListB) {
+            if (TimeUtils.StringToLong(d.getEnd_time()) < System.currentTimeMillis() + TIME) {
+                return;
             }
-            for (String id : group2) {
-                if (d.getPro_id().equalsIgnoreCase(id)) {
-                    total2 += d.getAlready_raised();
-                }
-            }
+            info.append(d.getPro_name()).append(":￥").append(d.getAlready_raised()).append("/￥").append(d.getGoal()).append("\n");
+            total1 += d.getAlready_raised();
         }
+        info.append("====================\n");
+        info.append("G港:\n");
+        for (Detail d : detailListG) {
+            total2 += d.getAlready_raised();
+            info.append(d.getPro_name()).append(":￥").append(d.getAlready_raised()).append("/￥").append(d.getGoal()).append("\n");
+        }
+        info.append("====================\n");
         if (total1 > total2) {
             double gap = total1 - total2;
-            info.append(name1).append(":").append("￥").append(total1).append(" / ").append(name2).append(":").append("￥").append(total2).append("\n");
-            info.append(name1).append("领先了").append(df.format(gap)).append("元\n====================\n");
+            info.append(name1).append(":").append("￥").append(df.format(total1)).append(" / ").append(name2).append(":").append("￥").append(df.format(total2)).append("\n");
+            info.append(name1).append("领先了￥").append(df.format(gap)).append("\n====================\n");
         } else {
             double gap = total2 - total1;
-            info.append(name1).append(":").append("￥").append(total1).append("/").append(name2).append(":").append("￥").append(total2).append("\n");
+            info.append(name1).append(":").append("￥").append(df.format(total1)).append("/").append(name2).append(":").append("￥").append(df.format(total2)).append("\n");
             info.append(name2).append("领先了￥").append(df.format(gap)).append("\n====================\n");
         }
         for (int i = 0; i <= 2; i++) {
