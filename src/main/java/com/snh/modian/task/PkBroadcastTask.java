@@ -30,7 +30,6 @@ public class PkBroadcastTask {
     @Value("${GROUP2}")
     private String GROUP2;
     DecimalFormat df = new DecimalFormat("0.00");
-    private static final long TIME = 1000 * 60 * 10;
 
     @Scheduled(cron = "0 0 * * * ?")
     public void pkBroadcast() {
@@ -60,25 +59,30 @@ public class PkBroadcastTask {
         // PK
         List<Detail> detailListB = ModianApi.queryDetails(GROUP1);
         List<Detail> detailListG = ModianApi.queryDetails(GROUP2);
+        if (CollectionUtils.isEmpty(detailListB) || CollectionUtils.isEmpty(detailListG)) {
+            LOGGER.warn("detailList is empty!");
+            return;
+        }
         StringBuilder info = new StringBuilder("当前PK情况如下:\n====================\n");
         // 分组处理
         double total1 = 0.0;
         double total2 = 0.0;
-        String name1 = "B城";
-        String name2 = "G港";
-        info.append("B城:\n");
+        String name1 = "上位圈";
+        String name2 = "下位圈";
+        info.append("上位圈:\n");
         for (Detail d : detailListB) {
-            if (TimeUtils.StringToLong(d.getEnd_time()) < System.currentTimeMillis() + TIME) {
+            if (TimeUtils.StringToLong(d.getEnd_time()) < TimeUtils.getAfterHalfAnHour()) {
                 return;
             }
             info.append(d.getPro_name()).append(":￥").append(d.getAlready_raised()).append("/￥").append(d.getGoal()).append("\n");
             total1 += d.getAlready_raised();
         }
         info.append("====================\n");
-        info.append("G港:\n");
+        info.append("下位圈(系数1.8):\n");
         for (Detail d : detailListG) {
-            total2 += d.getAlready_raised();
-            info.append(d.getPro_name()).append(":￥").append(d.getAlready_raised()).append("/￥").append(d.getGoal()).append("\n");
+            double raised = d.getAlready_raised() * 1.8;
+            total2 += raised;
+            info.append(d.getPro_name()).append(":￥").append(df.format(raised)).append("/￥").append(d.getGoal()).append("\n");
         }
         info.append("====================\n");
         if (total1 > total2) {

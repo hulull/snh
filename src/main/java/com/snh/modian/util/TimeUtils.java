@@ -34,4 +34,9 @@ public class TimeUtils {
 //        System.out.println(calendar.getTime());
         return calendar.getTimeInMillis();
     }
+
+    public static long getAfterHalfAnHour() {
+        long INTERVAL = 1000 * 60 * 30;
+        return System.currentTimeMillis() + INTERVAL;
+    }
 }

@@ -2,6 +2,7 @@ package com.snh.modian.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.snh.modian.service.QueryCardServiceImpl;
 import com.snh.modian.task.PkBroadcastTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,8 @@ public class CqMsgController {
     ObjectMapper objectMapper;
     @Autowired
     PkBroadcastTask pkBroadcastTask;
+    @Autowired
+    QueryCardServiceImpl queryCardService;
 
     @RequestMapping(value = "/message", method = RequestMethod.POST)
     public String GetMsg(HttpServletRequest httpServletRequest) {
@@ -33,7 +36,16 @@ public class CqMsgController {
             if (result != null) {
                 JsonNode jsonNode = objectMapper.readTree(result);
                 if (jsonNode.get("group_id") != null && jsonNode.get("group_id").asLong() == GROUPID) {
-                    pkBroadcastTask.pkBroadcast();
+                    String msg = jsonNode.get("message").asText();
+                    if (msg.equalsIgnoreCase("!pk")) {
+                        pkBroadcastTask.pkBroadcast();
+                    }
+                    if (msg.startsWith("查询#")) {
+                        int index = msg.indexOf("#");
+                        long qq = jsonNode.get("user_id").asLong();
+                        String username = msg.substring(index+1);
+                        queryCardService.sendCardMsgByUsername(username, qq);
+                    }
                 }
             }
         } catch (IOException e) {

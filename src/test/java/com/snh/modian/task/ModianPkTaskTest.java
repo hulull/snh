@@ -19,8 +19,8 @@ public class ModianPkTaskTest {
 
     @Test
     public void test() {
-//        List<Integer> modianIdList = Arrays.asList(18302,18303,18304,18306,18309,18310,18311);
-//        modianPkTask.modianPkTask(modianIdList);
-        modianPkTask.run();
+        List<Integer> modianIdList = Arrays.asList(19966);
+        modianPkTask.modianPkTask(modianIdList);
+//        modianPkTask.run();
     }
 }

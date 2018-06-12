@@ -1,5 +1,6 @@
 package com.snh.modian.service;
 
+import com.snh.modian.constant.CardConstant;
 import com.snh.modian.constant.ModianConstant;
 import com.snh.modian.constant.RedisKey;
 import com.snh.modian.constant.RedisOperation;
@@ -41,12 +42,6 @@ public class RollCardServiceImpl {
     private static final double CONSTANT = 9.16;
     DecimalFormat df = new DecimalFormat("0.00");
 
-    List<String> pCard = Arrays.asList("包 is watching you-1星", "恶犬-1星", "神秘冰淇淋-1星", "先睡一步-1星", "火锅的诱惑-1星");
-    List<String> nCard = Arrays.asList("暗中观察-2星", "嘟嘴思考-2星", "聆听-2星", "毛巾广告-2星", "歪头杀-2星", "稀有发型-2星");
-    List<String> rCard = Arrays.asList("暗夜巡行-3星", "柴犬懵逼-3星", "粉红少女心-3星", "裹紧小毯子-3星", "红白巫女-3星", "花环-3星", "机场时尚-3星", "灵魂歌手-3星", "美杜莎-3星", "青涩容颜-3星", "犬式围笑-3星", "人偶-3星", "若有所思-3星", "上目线-3星", "吸引注意力的眉毛-3星", "夏日阳光-3星", "桌布-3星", "奖杯-3星");
-    List<String> srCard = Arrays.asList("仓鼠少女-4星","柴的凝视-4星", "冬日暖阳-4星", "放课后-4星", "帅气学姐-4星", "委屈包包-4星", "校园回忆-4星","勇往直前-4星","雨中漫步-4星", "旅行小包-4星", "你的学妹-4星");
-    List<String> ssrCard = Arrays.asList("不羁行者-5星","测量-5星","吾辈是猫-5星", "反重力本体-5星");
-
     public int rollTimes(double money) {
         if (money == 10 * CONSTANT) {
             return 11;
@@ -76,27 +71,27 @@ public class RollCardServiceImpl {
         String card = null;
         switch (rank) {
             case 5:
-                card = ssrCard.get((int) (Math.random()*ssrCard.size()));
+                card = CardConstant.ssrCard.get((int) (Math.random()*CardConstant.ssrCard.size()));
                 stringRedisOperation.incrementHash(KeyUtil.generateKey(RedisKey.USER_SSR.getKey(), username), card);
                 return card;
             case 4:
-                card = srCard.get((int) (Math.random()*srCard.size()));
+                card = CardConstant.srCard.get((int) (Math.random()*CardConstant.srCard.size()));
                 stringRedisOperation.incrementHash(KeyUtil.generateKey(RedisKey.USER_SR.getKey(), username), card);
                 return card;
             case 3:
-                card = rCard.get((int) (Math.random()*rCard.size()));
+                card = CardConstant.rCard.get((int) (Math.random()*CardConstant.rCard.size()));
                 stringRedisOperation.incrementHash(KeyUtil.generateKey(RedisKey.USER_R.getKey(), username), card);
                 return card;
             case 2:
-                card = nCard.get((int) (Math.random()*nCard.size()));
+                card = CardConstant.nCard.get((int) (Math.random()*CardConstant.nCard.size()));
                 stringRedisOperation.incrementHash(KeyUtil.generateKey(RedisKey.USER_N.getKey(), username), card);
                 return card;
             case 1:
-                card = pCard.get((int) (Math.random()*pCard.size()));
+                card = CardConstant.pCard.get((int) (Math.random()*CardConstant.pCard.size()));
                 stringRedisOperation.incrementHash(KeyUtil.generateKey(RedisKey.USER_P.getKey(), username), card);
                 return card;
             default:
-                card = pCard.get((int) (Math.random()*pCard.size()));
+                card = CardConstant.pCard.get((int) (Math.random()*CardConstant.pCard.size()));
                 stringRedisOperation.incrementHash(KeyUtil.generateKey(RedisKey.USER_P.getKey(), username), card);
                 return card;
         }
@@ -227,7 +222,7 @@ public class RollCardServiceImpl {
             }
             info += detail.getPro_name() + " 链接" + "https://zhongchou.modian.com/item/" + detail.getPro_id() + ".html";
             LOGGER.info(info);
-            for (int i = 0; i <=2; i++) {
+            for (int i = 0; i < 5; i++) {
                 CqpHttpApiResp resp = CqpHttpApi.getInstance().sendGroupMsg(GROUPID, info);
                 if (resp.getRetcode() == 0) {
                     break;

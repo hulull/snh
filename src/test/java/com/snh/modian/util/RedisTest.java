@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+import java.util.Map;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SnhApplication.class)
 public class RedisTest {
@@ -16,6 +19,12 @@ public class RedisTest {
     @Test
     public void testRedis() {
         long ret = redisOperation.incrementHash("testhash", "testhash1");
+        System.out.println(ret);
+    }
+
+    @Test
+    public void testGet() {
+        Map<String, String> ret = redisOperation.getAllHashValue("testhash");
         System.out.println(ret);
     }
 }
