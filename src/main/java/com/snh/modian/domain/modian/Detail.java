@@ -11,6 +11,8 @@ public class Detail implements Comparable<Detail> {
     private String pro_name;
     private String goal;
     private double already_raised;
+    private long backer_count;
+    private long success_order_count;
     private String end_time;
     private String pc_cover;
     private String mobile_cover;
@@ -72,6 +74,22 @@ public class Detail implements Comparable<Detail> {
 
     public void setMobile_cover(String mobile_cover) {
         this.mobile_cover = mobile_cover;
+    }
+
+    public long getBacker_count() {
+        return backer_count;
+    }
+
+    public void setBacker_count(long backer_count) {
+        this.backer_count = backer_count;
+    }
+
+    public long getSuccess_order_count() {
+        return success_order_count;
+    }
+
+    public void setSuccess_order_count(long success_order_count) {
+        this.success_order_count = success_order_count;
     }
 
     @Override

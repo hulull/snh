@@ -153,7 +153,7 @@ public class RollCardServiceImpl {
             }
             info += detail.getPro_name() + " 链接" + "https://zhongchou.modian.com/item/" + detail.getPro_id() + ".html";
             LOGGER.info(info);
-            for (int i = 0; i <=2; i++) {
+            for (int i = 0; i < 5; i++) {
                 CqpHttpApiResp resp = CqpHttpApi.getInstance().sendGroupMsg(GROUPID, info);
                 if (resp.getRetcode() == 0) {
                     break;
