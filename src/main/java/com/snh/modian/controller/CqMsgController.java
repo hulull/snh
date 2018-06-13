@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.snh.modian.service.QueryCardServiceImpl;
 import com.snh.modian.task.PkBroadcastTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +21,8 @@ import java.util.stream.Collectors;
 @RestController
 public class CqMsgController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CqMsgController.class);
+
     @Value("${GROUPID}")
     private long GROUPID;
     @Autowired
@@ -31,8 +35,9 @@ public class CqMsgController {
     @RequestMapping(value = "/message", method = RequestMethod.POST)
     public String GetMsg(HttpServletRequest httpServletRequest) {
         try {
-            String result = new BufferedReader(new InputStreamReader(httpServletRequest.getInputStream()))
+            String result = new BufferedReader(new InputStreamReader(httpServletRequest.getInputStream(), "utf-8"))
                     .lines().collect(Collectors.joining(System.lineSeparator()));
+//            LOGGER.info(result);
             if (result != null) {
                 JsonNode jsonNode = objectMapper.readTree(result);
                 if (jsonNode.get("group_id") != null && jsonNode.get("group_id").asLong() == GROUPID) {

@@ -15,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public class QueryCardServiceImpl {
     public void sendCardMsgByUsername(String username, long qq) {
         StringBuilder info = new StringBuilder("[CQ:at,qq=").append(qq).append("] ");
         info.append("{").append(username).append("}").append("查询结果为:");
-        List<String> collectionRate = new ArrayList<>();
+        Map<Integer, String> collectionRate = new HashMap<>();
         RedisKey[] redisKeys = RedisKey.values();
         int emptyCount = 0;
         for (int i = 0; i < redisKeys.length; i++) {
@@ -63,15 +64,17 @@ public class QueryCardServiceImpl {
                 info.append("【").append(entry.getKey()).append("×").append(entry.getValue()).append("】");
             }
             double rate = map.size()*1.0 / cardSize.get(i);
-            collectionRate.add(df.format(rate));
+            if (rate > 1) {
+                rate = 1;
+            }
+            collectionRate.put(i+1, df.format(rate));
         }
         info.append("\n====================\n当前卡片收集率:\n");
-        for (int i = 0; i < collectionRate.size(); i++) {
-            String rate = collectionRate.get(i);
-            if (rate.equalsIgnoreCase("0.00%")) {
+        for (Map.Entry<Integer, String> entry : collectionRate.entrySet()) {
+            if (entry.getValue().equalsIgnoreCase("0.00%")) {
                 continue;
             }
-            info.append(i+1).append("星:").append(collectionRate.get(i)).append("\n");
+            info.append(entry.getKey()).append("星:").append(entry.getValue()).append("\n");
         }
         LOGGER.info(info.toString());
         sendMsg(info.toString());
