@@ -213,7 +213,7 @@ public class RollCardServiceImpl {
     public void rollCardV2(int modianId, List<Order> orderList) {
         for (Order order : orderList) {
             String info = order.getNickname() + " 爸爸刚刚支持了" + order.getBacker_money() + "元。\n====================\n";
-            info += getCardMsg(order);
+            info += worldCupService.getCardMsgWorldCup(order);
             Detail detail = ModianApi.queryDetail(modianId);
 //            System.out.println(detail.toString());
             double gap = Double.valueOf(detail.getGoal()) - detail.getAlready_raised();

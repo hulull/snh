@@ -24,6 +24,7 @@ public class ModianTask implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ModianTask.class);
     private static Long newestClockIn = System.currentTimeMillis();
+//    private static Long newestClockIn = 0L;
 
     public boolean modianTask() {
         List<Order> orderList = ModianApi.queryOrders(MODIANID, 1);
@@ -43,7 +44,7 @@ public class ModianTask implements Runnable {
         if (CollectionUtils.isEmpty(resultList)) {
             return false;
         }
-        rollCardService.rollCard(MODIANID, resultList);
+        rollCardService.rollCardV2(MODIANID, resultList);
         return true;
     }
 
