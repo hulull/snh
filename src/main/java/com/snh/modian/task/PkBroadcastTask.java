@@ -48,7 +48,7 @@ public class PkBroadcastTask {
         Collections.sort(detailList);
         // 设置总金额
         stringBuilder.append("总金额:\n");
-        String format = "\t\t\t\t";
+        String format = "\t";
         for (Detail detail : detailList) {
             String name = detail.getPro_name().contains("胡晓慧") ? "胡晓慧" : "蒋芸";
             stringBuilder.append(format).append(name).append(":").append(detail.getAlready_raised()).append("\n");
