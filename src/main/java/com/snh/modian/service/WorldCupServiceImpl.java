@@ -25,13 +25,13 @@ public class WorldCupServiceImpl {
     @Value("${SR_BOUND}")
     private double SR_BOUND;
 
-    private static final double CONSTANT = 9.16;
+    private static final double CONSTANT = 10;
 
     public String getCardMsgWorldCup(Order order) {
         StringBuilder cardMsg = new StringBuilder();
         int rollTimes = (int) (order.getBacker_money() / CONSTANT);
         if (rollTimes == 0) {
-            cardMsg.append("支持9.16元就可以获得抽卡机会，快来试试吧！\n");
+            cardMsg.append("支持10元就可以获得抽卡机会，快来试试吧！\n");
         } else {
             cardMsg.append("获得了").append(rollTimes).append("次抽卡机会, 抽取以下卡片:\n");
             String showCard = null;

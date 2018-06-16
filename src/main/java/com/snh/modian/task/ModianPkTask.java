@@ -30,6 +30,16 @@ public class ModianPkTask implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ModianPkTask.class);
     private static Long newestClockIn = System.currentTimeMillis();
+//    private static Long newestClockIn = 0L;
+
+    private long updateClockIn(List<Order> orderList) {
+        long maxTime = newestClockIn;
+        for (Order order : orderList) {
+            long time = TimeUtils.StringToLong(order.getPay_time());
+            maxTime = Math.max(time, newestClockIn);
+        }
+        return maxTime;
+    }
 
     public boolean modianPkTask(List<Integer> modianIdList) {
         boolean flag = false;
@@ -40,20 +50,20 @@ public class ModianPkTask implements Runnable {
                 continue;
             }
             List<Order> resultList = new ArrayList<>();
+            long maxTime = 0;
             for (Order order : orders) {
-                if (TimeUtils.StringToLong(order.getPay_time()) > newestClockIn) {
+                long time = TimeUtils.StringToLong(order.getPay_time());
+                if (time > newestClockIn) {
                     resultList.add(order);
-                    maxPayTime = Math.max(maxPayTime, TimeUtils.StringToLong(order.getPay_time()));
+                    maxPayTime = Math.max(maxPayTime, time);
                 }
             }
             if (!CollectionUtils.isEmpty(resultList)) {
                 flag = true;
+                LOGGER.info("newestClockIn:{} maxPayTime:{}", new Date(newestClockIn), new Date(maxPayTime));
+                newestClockIn = maxPayTime;  // 更新
                 rollCardService.rollCardV2(id, resultList);
             }
-        }
-        if (maxPayTime > newestClockIn) {
-            LOGGER.info("newestClockIn:{} maxPayTime:{}", new Date(newestClockIn), new Date(maxPayTime));
-            newestClockIn = maxPayTime;
         }
         return flag;
     }
@@ -88,7 +98,7 @@ public class ModianPkTask implements Runnable {
             try {
                 boolean ret = modianPkTask(modianIdList);
                 if (!ret) {
-                    TimeUnit.SECONDS.sleep(10);
+                    TimeUnit.SECONDS.sleep(15);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
