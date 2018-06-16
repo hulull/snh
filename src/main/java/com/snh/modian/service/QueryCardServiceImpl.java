@@ -39,12 +39,14 @@ public class QueryCardServiceImpl {
         cardSize.add(CardConstant.rCard.size());
         cardSize.add(CardConstant.srCard.size());
         cardSize.add(CardConstant.ssrCard.size());
+        cardSize.add(CardConstant.oridinary.size());
+        cardSize.add(CardConstant.special.size());
     }
 
     public void sendCardMsgByUsername(String username, long qq) {
         StringBuilder info = new StringBuilder("[CQ:at,qq=").append(qq).append("] ");
         info.append("{").append(username).append("}").append("查询结果为:");
-        Map<Integer, String> collectionRate = new HashMap<>();
+        Map<String, String> collectionRate = new HashMap<>();
         RedisKey[] redisKeys = RedisKey.values();
         int emptyCount = 0;
         for (int i = 0; i < redisKeys.length; i++) {
@@ -52,7 +54,7 @@ public class QueryCardServiceImpl {
             Map<String, String> map = stringRedisOperation.getAllHashValue(key);
             if (CollectionUtils.isEmpty(map)) {
                 emptyCount++;
-                if (emptyCount == 5) {
+                if (emptyCount == 7) {
                     info.append("您的查询结果为空,请输入正确的摩点ID.");
                     sendMsg(info.toString());
                     return;
@@ -67,14 +69,21 @@ public class QueryCardServiceImpl {
             if (rate > 1) {
                 rate = 1;
             }
-            collectionRate.put(i+1, df.format(rate));
+            if (i < 5) {
+                int rank = i + 1;
+                collectionRate.put(String.valueOf(rank + "星"), df.format(rate));
+            } else if (i == 5) {
+                collectionRate.put("世界杯主题:", df.format(rate));
+            } else if (i == 6) {
+                collectionRate.put("任务卡:", df.format(rate));
+            }
         }
         info.append("\n====================\n当前卡片收集率:\n");
-        for (Map.Entry<Integer, String> entry : collectionRate.entrySet()) {
+        for (Map.Entry<String, String> entry : collectionRate.entrySet()) {
             if (entry.getValue().equalsIgnoreCase("0.00%")) {
                 continue;
             }
-            info.append(entry.getKey()).append("星:").append(entry.getValue()).append("\n");
+            info.append(entry.getKey()).append(entry.getValue()).append("\n");
         }
         LOGGER.info(info.toString());
         sendMsg(info.toString());

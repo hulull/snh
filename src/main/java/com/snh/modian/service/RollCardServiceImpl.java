@@ -38,6 +38,8 @@ public class RollCardServiceImpl {
     private double R_BOUND;
     @Value("${SR_BOUND}")
     private double SR_BOUND;
+    @Autowired
+    WorldCupServiceImpl worldCupService;
 
     private static final double CONSTANT = 9.16;
     DecimalFormat df = new DecimalFormat("0.00");
@@ -142,7 +144,7 @@ public class RollCardServiceImpl {
                 info = order.getNickname() + " 爸爸刚刚支持了" + order.getBacker_money() + "元，在当前项目中已集资" + userRankDetail.get(ModianConstant.USER_RAISED_MONEY) +
                         "元，当前排名" + userRankDetail.get(ModianConstant.USER_RANK) + "\n====================\n";
             }
-            info += getCardMsg(order); // 获取抽卡信息
+            info += worldCupService.getCardMsgWorldCup(order); // 获取抽卡信息
             Detail detail = ModianApi.queryDetail(modianId);
 //            System.out.println(detail.toString());
             double gap = Double.valueOf(detail.getGoal()) - detail.getAlready_raised();

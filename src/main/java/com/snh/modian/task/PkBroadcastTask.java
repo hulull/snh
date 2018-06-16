@@ -1,7 +1,9 @@
 package com.snh.modian.task;
 
 import com.snh.modian.domain.cqp.CqpHttpApiResp;
+import com.snh.modian.domain.cqp.CqpRespGroupMsg;
 import com.snh.modian.domain.modian.Detail;
+import com.snh.modian.domain.modian.RankMoney;
 import com.snh.modian.util.TimeUtils;
 import com.snh.modian.util.cqp.CqpHttpApi;
 import com.snh.modian.util.modian.ModianApi;
@@ -31,71 +33,59 @@ public class PkBroadcastTask {
     private String GROUP2;
     DecimalFormat df = new DecimalFormat("0.00");
 
-    @Scheduled(cron = "0 0 * * * ?")
+//    @Scheduled(cron = "0 0 * * * ?")
     public void pkBroadcast() {
-        long time = System.currentTimeMillis();
-        if (time > TimeUtils.getZeroClock() && time < TimeUtils.getSevenClock()) {
-            return;
-        }
-//        List<Detail> detailList = ModianApi.queryDetails(UNIT_MODIANIDS);
-//        if (CollectionUtils.isEmpty(detailList)) {
-//            LOGGER.error("ModianApi.queryDetails({}) failed!", UNIT_MODIANIDS);
+//        long time = System.currentTimeMillis();
+//        if (time > TimeUtils.getZeroClock() && time < TimeUtils.getSevenClock()) {
 //            return;
 //        }
-//        Collections.sort(detailList);
-//        StringBuilder info = new StringBuilder("当前排名如下:\n====================\n");
-//        for (int i = 0; i < detailList.size(); i++) {
-//            Detail detail = detailList.get(i);
-//            if (TimeUtils.StringToLong(detail.getEnd_time()) < System.currentTimeMillis() + TIME) {
-//                return;
-//            }
-//            int ranking = i + 1;
-//            info.append("【").append(ranking).append("】");
-//            info.append(detail.getPro_name()).append("\n");
-//            info.append("￥").append(detail.getAlready_raised()).append("/").append("￥").append(detail.getGoal()).append("\n");
-////            info.append("https://zhongchou.modian.com/item/").append(detail.getPro_id()).append(".html\n");
-//            info.append("====================\n");
-//        }
-        // PK
-        List<Detail> detailListB = ModianApi.queryDetails(GROUP1);
-        List<Detail> detailListG = ModianApi.queryDetails(GROUP2);
-        if (CollectionUtils.isEmpty(detailListB) || CollectionUtils.isEmpty(detailListG)) {
-            LOGGER.warn("detailList is empty!");
+        List<Detail> detailList = ModianApi.queryDetails(UNIT_MODIANIDS);
+        if (CollectionUtils.isEmpty(detailList)) {
+            LOGGER.error("ModianApi.queryDetails({}) failed!", UNIT_MODIANIDS);
             return;
         }
-        StringBuilder info = new StringBuilder("当前PK情况如下:\n====================\n");
-        // 分组处理
-        double total1 = 0.0;
-        double total2 = 0.0;
-        String name1 = "上位圈";
-        String name2 = "下位圈";
-        info.append("上位圈:\n");
-        for (Detail d : detailListB) {
-            if (TimeUtils.StringToLong(d.getEnd_time()) < TimeUtils.getAfterHalfAnHour()) {
-                return;
-            }
-            info.append(d.getPro_name()).append(":￥").append(d.getAlready_raised()).append("/￥").append(d.getGoal()).append("\n");
-            total1 += d.getAlready_raised();
+        StringBuilder stringBuilder = new StringBuilder("[世界杯小组赛]尼日利亚VS沙特阿拉伯——当前战况:\n");
+        Collections.sort(detailList);
+        // 设置总金额
+        stringBuilder.append("总金额:\n");
+        String format = "\t\t\t\t";
+        for (Detail detail : detailList) {
+            String name = detail.getPro_name().contains("姜杉") ? "姜杉" : "左婧媛";
+            stringBuilder.append(format).append(name).append(":").append(detail.getAlready_raised()).append("\n");
         }
-        info.append("====================\n");
-        info.append("下位圈(系数1.8):\n");
-        for (Detail d : detailListG) {
-            double raised = d.getAlready_raised() * 1.8;
-            total2 += raised;
-            info.append(d.getPro_name()).append(":￥").append(df.format(raised)).append("/￥").append(d.getGoal()).append("\n");
-        }
-        info.append("====================\n");
-        if (total1 > total2) {
-            double gap = total1 - total2;
-            info.append(name1).append(":").append("￥").append(df.format(total1)).append(" / ").append(name2).append(":").append("￥").append(df.format(total2)).append("\n");
-            info.append(name1).append("领先了￥").append(df.format(gap)).append("\n====================\n");
+        // 第一名
+        Detail detail1 = detailList.get(0);
+        Detail detail2 = detailList.get(1);
+        List<RankMoney> rankMoneyList1 = ModianApi.queryRankMoneys(Integer.valueOf(detail1.getPro_id()), 1);
+        List<RankMoney> rankMoneyList2 = ModianApi.queryRankMoneys(Integer.valueOf(detail2.getPro_id()), 1);
+        stringBuilder.append("第1名金额:\n");
+        if (CollectionUtils.isEmpty(rankMoneyList1)) {
+            stringBuilder.append(format).append("无");
         } else {
-            double gap = total2 - total1;
-            info.append(name1).append(":").append("￥").append(df.format(total1)).append("/").append(name2).append(":").append("￥").append(df.format(total2)).append("\n");
-            info.append(name2).append("领先了￥").append(df.format(gap)).append("\n====================\n");
+            stringBuilder.append(format).append(rankMoneyList1.get(0).getNickname()).append(":")
+                    .append(rankMoneyList1.get(0).getBacker_money()).append("\n");
         }
-        for (int i = 0; i <= 2; i++) {
-            CqpHttpApiResp resp = CqpHttpApi.getInstance().sendGroupMsg(GROUPID, info.toString());
+        if (CollectionUtils.isEmpty(rankMoneyList2)) {
+            stringBuilder.append(format).append("无");
+        } else {
+            stringBuilder.append(format).append(rankMoneyList2.get(0).getNickname()).append(":")
+                    .append(rankMoneyList2.get(0).getBacker_money()).append("\n");
+        }
+        stringBuilder.append("第10名金额:\n");
+        if (rankMoneyList1 != null && rankMoneyList1.size() >= 10) {
+            stringBuilder.append(format).append(rankMoneyList1.get(9).getNickname()).append(":")
+                    .append(rankMoneyList1.get(9).getBacker_money()).append("\n");
+        } else {
+            stringBuilder.append(format).append("无\n");
+        }
+        if (rankMoneyList2 != null && rankMoneyList1.size() >= 10) {
+            stringBuilder.append(format).append(rankMoneyList2.get(9).getNickname()).append(":")
+                    .append(rankMoneyList2.get(9).getBacker_money()).append("\n");
+        } else {
+            stringBuilder.append(format).append("无\n");
+        }
+        for (int i = 0; i < 5; i++) {
+            CqpHttpApiResp resp = CqpHttpApi.getInstance().sendGroupMsg(GROUPID, stringBuilder.toString());
             if (resp.getRetcode() == 0) {
                 break;
             }
