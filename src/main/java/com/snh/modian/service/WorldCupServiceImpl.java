@@ -37,7 +37,7 @@ public class WorldCupServiceImpl {
             String showCard = null;
             String taskCard = null;
             Map<String, Integer> cardMap = new HashMap<>();
-            if (taskCard == null && order.getBacker_money() >= 35) {
+            if (order.getBacker_money() >= 35 && !stringRedisOperation.hasKey(String.valueOf(order.getUser_id()))) {
                 taskCard = rollCard(order, 2);
             }
             for (int i = 0; i < rollTimes; i++) {

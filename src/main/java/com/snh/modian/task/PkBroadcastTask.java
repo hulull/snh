@@ -126,8 +126,8 @@ public class PkBroadcastTask {
         if (hxh_total <= other_total || hxh_top1 <= other_top1 || hxh_top10 <= other_top10 || hxh_count <= other_count) {
             other_score++;
         }
-        stringBuilder.append("当前得分:\n");
-        stringBuilder.append(format).append(hxh_score).append(":").append(other_score);
+//        stringBuilder.append("当前得分:\n");
+//        stringBuilder.append(format).append(hxh_score).append(":").append(other_score);
         for (int i = 0; i < 5; i++) {
             CqpHttpApiResp resp = CqpHttpApi.getInstance().sendGroupMsg(GROUPID, stringBuilder.toString());
             if (resp.getRetcode() == 0) {

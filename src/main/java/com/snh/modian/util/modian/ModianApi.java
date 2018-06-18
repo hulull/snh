@@ -1,5 +1,6 @@
 package com.snh.modian.util.modian;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.snh.modian.domain.modian.*;
 import com.snh.modian.util.ConvertUtils;
@@ -21,7 +22,7 @@ public class ModianApi {
     private static final String RANKING_URL = "https://wds.modian.com/api/project/rankings";
     private static final String RANK_URL = "https://wds.modian.com/api/project/rankings";
     private static final String DETAIL_URL = "https://wds.modian.com/api/project/detail";
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
 
 
     /**

@@ -33,7 +33,7 @@ public class ModianApiTest {
 //        ModianApi.queryDetails(String.valueOf(MODIANID + "," + "17871"));
 //        List<Order> orders = ModianApi.queryOrders(17871, 1);
 //        System.out.println(1);
-//        ModianApi.queryDetail(17871);
-        ModianApi.queryRankMoneys(17871, 1);
+        ModianApi.queryDetail(17871);
+//        ModianApi.queryRankMoneys(17871, 1);
     }
 }
