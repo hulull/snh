@@ -56,18 +56,8 @@ public class PkBroadcastTask {
         return count;
     }
 
-//    @Scheduled(cron = "0 0 * * * ?")
-    public void pkBroadcast() {
-//        long time = System.currentTimeMillis();
-//        if (time > TimeUtils.getZeroClock() && time < TimeUtils.getSevenClock()) {
-//            return;
-//        }
-        List<Detail> detailList = ModianApi.queryDetails(UNIT_MODIANIDS);
-        if (CollectionUtils.isEmpty(detailList)) {
-            LOGGER.error("ModianApi.queryDetails({}) failed!", UNIT_MODIANIDS);
-            return;
-        }
-        StringBuilder stringBuilder = new StringBuilder("[世界杯小组赛]尼日利亚VS沙特阿拉伯——当前战况:\n");
+    public String getWorldCupInfo(List<Detail> detailList) {
+        StringBuilder stringBuilder = new StringBuilder("[世界杯小组赛]尼日利亚vs阿根廷——当前战况:\n");
 //        Collections.sort(detailList);
         // 设置总金额
         stringBuilder.append("总金额:\n");
@@ -85,7 +75,7 @@ public class PkBroadcastTask {
         int hxh_score = 0;
         int other_score = 0;
         for (Detail detail : detailList) {
-            String name = detail.getPro_name().contains("胡晓慧") ? "胡晓慧" : "蒋芸";
+            String name = detail.getPro_name().contains("胡晓慧") ? "胡晓慧" : "刘力菲";
             stringBuilder.append(format).append(name).append(":").append(detail.getAlready_raised()).append("\n");
         }
         // 第一名
@@ -126,10 +116,34 @@ public class PkBroadcastTask {
         if (hxh_total <= other_total || hxh_top1 <= other_top1 || hxh_top10 <= other_top10 || hxh_count <= other_count) {
             other_score++;
         }
-//        stringBuilder.append("当前得分:\n");
-//        stringBuilder.append(format).append(hxh_score).append(":").append(other_score);
+        return null;
+    }
+
+    public String getInfoPk(List<Detail> detailList) {
+        StringBuilder stringBuilder = new StringBuilder("当前战况:\n");
+        for (int i = 0; i < detailList.size(); i++) {
+            Detail detail = detailList.get(i);
+            stringBuilder.append(i+1).append(".").append(detail.getPro_name())
+                    .append(" 支持人数:").append(detail.getBacker_count())
+                    .append(" 已筹:").append("￥").append(detail.getAlready_raised()).append("\n");
+        }
+        return stringBuilder.toString();
+    }
+
+//    @Scheduled(cron = "0 0 * * * ?")
+    public void pkBroadcast() {
+        List<Detail> detailList = ModianApi.queryDetails(UNIT_MODIANIDS);
+        if (CollectionUtils.isEmpty(detailList)) {
+            LOGGER.error("ModianApi.queryDetails({}) failed!", UNIT_MODIANIDS);
+            return;
+        }
+        Collections.sort(detailList);
+        sendMsg(getInfoPk(detailList));
+    }
+
+    public void sendMsg(String info) {
         for (int i = 0; i < 5; i++) {
-            CqpHttpApiResp resp = CqpHttpApi.getInstance().sendGroupMsg(GROUPID, stringBuilder.toString());
+            CqpHttpApiResp resp = CqpHttpApi.getInstance().sendGroupMsg(GROUPID, info);
             if (resp.getRetcode() == 0) {
                 break;
             }
