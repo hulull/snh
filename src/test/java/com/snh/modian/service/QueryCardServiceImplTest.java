@@ -15,6 +15,6 @@ public class QueryCardServiceImplTest {
 
     @Test
     public void test() {
-        queryCardService.sendCardMsgByUsername("某236", 1L);
+        queryCardService.sendCardMsgByUsername("", 1L);
     }
 }
